@@ -1,0 +1,31 @@
+# @package _global_
+
+defaults:
+  - _self_
+
+task_name: "train_default"
+tags: ["dev"]
+train: True
+test: False
+compile: False
+ckpt_path: null
+load_state_dict_only: True
+seed: 42
+
+trainer: {}
+
+paths:
+  output_dir: "/storage/zhaokailong/FPdiffusion/code/GitHub_MultPathDiff/train_model" 
+  log_dir: "${hydra:runtime.output_dir}/logs"
+
+guidance:
+    cond_ckpt: null
+    uncond_ckpt: null
+
+hydra:
+  run:
+    dir: /storage/zhaokailong/FPdiffusion/code/GitHub_MultPathDiff/output/${task_name}/${now:%Y-%m-%d_%H-%M-%S}
+  job_logging:
+    handlers:
+      file:
+        filename: ${hydra.runtime.output_dir}/train.log

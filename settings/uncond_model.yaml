@@ -1,0 +1,72 @@
+# @package _global_
+
+defaults:
+  - train
+  - base_model@model 
+  - _self_
+
+task_name: "uncond_train"
+tags: ["dev"]
+
+
+trainer:
+  strategy: ddp
+  precision: 32
+  max_epochs: 2 ###2000
+  inference_mode: True
+
+model:
+  stage: 2
+  score_network:
+    model_nn:
+      embedder:
+        pretrained_node_repr_size: 0
+        pretrained_edge_repr_size: 0
+
+data:
+  _target_: src.data.full_atom.datamodule.FullAtomDataModule
+  diffuser: ${model.diffuser}
+  train_batch_size: 1
+  gen_batch_size: 1
+  val_batch_size: 1
+  num_workers: 0
+  pin_memory: True
+  clustering_training: False
+  dynamic_batching: True
+
+  repr_loader: null
+  
+  dataset:
+    train_dataset:
+      _target_: src.data.full_atom.dataset.RCSBDataset
+      csv_path: "/storage/zhaokailong/FPdiffusion/code/FPdiffusion/data/dataset/rcsb/disorder-test.csv"
+      data_dir: "/storage/zhaokailong/dataset/Disorder_protein/CALVADOS_IDRome/disorder_pdb"
+      mode: "train"
+      disorder: true
+      csv_processor_cfg:
+        min_seqlen: 20
+        max_seqlen: 500
+        max_coil_ratio: 1
+        min_valid_frame_ratio: 0
+        groupby: cluster_70_id
+        latest_release_date: '2021-12-31'
+        apo_csv_path: "/storage/zhaokailong/FPdiffusion/code/MultPathDiffusion_Force_sample/datasets/apo/apo_metadata.csv"
+    
+    val_dataset:
+      _target_: src.data.full_atom.dataset.RCSBDataset
+      csv_path: "/storage/zhaokailong/FPdiffusion/code/FPdiffusion/data/dataset/rcsb/disorder-test.csv"
+      data_dir: "/storage/zhaokailong/dataset/Disorder_protein/CALVADOS_IDRome/disorder_pdb"
+      mode: "val"
+      disorder: true
+      csv_processor_cfg:
+        min_seqlen: 20
+        max_seqlen: 500
+        max_coil_ratio: 1
+        min_valid_frame_ratio: 0
+        groupby: cluster_70_id
+        earliest_release_date: '2022-01-01'
+        latest_release_date: '2025-03-01'
+
+    val_gen_dataset: null
+    
+    test_gen_dataset: null

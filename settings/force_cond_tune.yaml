@@ -1,0 +1,80 @@
+# @package _global_
+
+defaults:
+  - train
+  - force_base_model@model
+  - _self_
+
+task_name: "force_cond_tune"
+tags: ["train", "force", "cond"]
+
+data:
+  _target_: src.data.full_atom.datamodule.FullAtomDataModule
+  diffuser: ${model.diffuser}
+  train_batch_size: 32
+  gen_batch_size: 75
+  val_batch_size: 32
+  num_workers: 20
+  pin_memory: True
+  clustering_training: True
+  dynamic_batching: False
+
+  repr_loader:
+    _target_: src.data.full_atom.feat_loader.ESMFoldReprLoader
+    data_root: "/storage/zhaokailong/dataset/pdb_esm/esm_repr"
+    node_size: 1024
+    edge_size: 128
+
+  dataset:
+    train_dataset:
+      _target_: src.data.guidance.dataset.GuidanceDataset
+      csv_path: "/storage/zhaokailong/dataset/energy_train_data/sample_data_70_energy_openmm/test_order_train_xiaoyu400_max_step_20.csv"
+      data_dir: "/storage/zhaokailong/dataset/energy_train_data/sample_data_70_energy_openmm/group_full"
+      msta_dir: "/storage/zhaokailong/dataset/pdb_esm/Fscore/RCSB_MSTA_complete"
+      disorder: false
+    val_dataset:
+      _target_: src.data.guidance.dataset.GuidanceDataset
+      csv_path: "/storage/zhaokailong/dataset/energy_train_data/sample_data_70_energy_openmm/test_order_val_xiaoyu400_max_step_5.csv"
+      data_dir: "/storage/zhaokailong/dataset/energy_train_data/sample_data_70_energy_openmm/group_full"
+      msta_dir: "/storage/zhaokailong/dataset/pdb_esm/Fscore/RCSB_MSTA_complete"
+      disorder: false
+    val_gen_dataset: null
+    test_gen_dataset:
+      _target_: src.data.full_atom.dataset.GenDataset
+      csv_path: "/home/zhaokailong/FPdiffusion/code/FPdiffusion/datasets/cameo2022/cameo2022_metadata.csv"
+      num_samples: 1
+
+model:
+  stage: 1
+  score_network:
+    cond_model_nn:
+      embedder:
+        pretrained_node_repr_size: 1024
+        pretrained_edge_repr_size: 128
+    
+    cond_ckpt_path: ${paths.guidance.cond_ckpt}
+    
+    cfg:
+      force_guidance_strength: 1.0
+      clsfree_guidance_strength: 0.5
+
+callbacks:
+  model_checkpoint_by_epoch:
+    every_n_epochs: 100
+  early_stopping: null
+  model_summary: null
+  rich_progress_bar: null
+
+trainer:
+  strategy: ddp_find_unused_parameters_true
+  precision: 32
+  max_epochs: 3
+  inference_mode: False
+  enable_progress_bar: True
+
+logger:
+  csv:
+    _target_: lightning.pytorch.loggers.csv_logs.CSVLogger
+    save_dir: ${paths.output_dir}
+    name: "csv/"
+    prefix: ""

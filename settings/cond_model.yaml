@@ -1,0 +1,83 @@
+# @package _global_
+
+defaults:
+  - train
+  - base_model@model 
+  - _self_
+
+task_name: "cond_train"
+tags: ["dev"]
+notes: null
+
+trainer:
+  strategy: "auto"
+  precision: 32
+  max_epochs: 2 ###2000
+  inference_mode: True
+
+model:
+  val_gen_every_n_epochs: 1
+  stage: 1
+
+callbacks:
+  monitor: "val/total_loss"
+  model_checkpoint_by_epoch:
+    every_n_epochs: 100
+  early_stopping: null
+  model_summary: null
+  rich_progress_bar: null
+
+seed: 42
+
+data:
+  _target_: src.data.full_atom.datamodule.FullAtomDataModule
+  diffuser: ${model.diffuser}
+  train_batch_size: 1
+  gen_batch_size: 1
+  val_batch_size: 1
+  num_workers: 0
+  pin_memory: True
+  clustering_training: False
+  dynamic_batching: True
+
+  repr_loader:
+    _target_: src.data.full_atom.feat_loader.ESMFoldReprLoader
+    data_root: "/storage/zhaokailong/dataset/pdb_esm/esm_repr"
+    node_size: 1024
+    edge_size: 128
+
+  dataset:
+    train_dataset:
+      _target_: src.data.full_atom.dataset.RCSBDataset
+      csv_path: "/storage/zhaokailong/dataset/pdb_esm/rcsb_metadata-test-33.csv"
+      data_dir: "/storage/zhaokailong/dataset/pdb_esm/RCSB_PDB_encode_Res_from_one"
+      msta_dir: "/storage/zhaokailong/dataset/pdb_esm/Fscore/RCSB_MSTA_complete"
+      mode: "train"
+      disorder: false
+      csv_processor_cfg:
+        min_seqlen: 20
+        max_seqlen: 500
+        max_coil_ratio: 0.5
+        min_valid_frame_ratio: 0.7
+        groupby: cluster_70_id
+        latest_release_date: '2023-04-10'
+    
+    val_dataset:
+      _target_: src.data.full_atom.dataset.RCSBDataset
+      csv_path: "/storage/zhaokailong/dataset/pdb_esm/rcsb_metadata-test-33.csv"
+      data_dir: "/storage/zhaokailong/dataset/pdb_esm/RCSB_PDB_encode_Res_from_one"
+      msta_dir: "/storage/zhaokailong/dataset/pdb_esm/Fscore/RCSB_MSTA_complete"
+      mode: "val"
+      disorder: false
+      csv_processor_cfg:
+          min_seqlen: 20
+          max_seqlen: 500
+          max_coil_ratio: 0.5
+          min_valid_frame_ratio: 0.7
+          groupby: cluster_70_id
+          earliest_release_date: '2023-04-11'
+          latest_release_date: '2025-04-16'
+
+    val_gen_dataset: null
+    
+    test_gen_dataset: null
