@@ -63,45 +63,28 @@ Each species-group database is provided as a separate `.tar` archive. Download a
 
 ## Training
 
-We use Hydra for configuration management. All configuration files are located in the `settings/` directory.
+The sequence-conditional and unconditional score models are fine-tuned separately using the force-supervised datasets described above. The pretrained PathDiffusion checkpoints are used to initialize the corresponding models.
 
-
-
-\*\*1. Conditional Training (Fold-based)\*\*:
+### Unconditional model
 
 ```bash
-
-python train.py \\
-
-&nbsp;   --config-name cond\_model \\
-
-&nbsp;   task\_name=cond\_train \\
-
-&nbsp;   data.train\_batch\_size=1 \\
-
-&nbsp;   paths.output\_dir="./train\_model"
-
+python3 train.py \
+    --config-name force_uncond_tune \
+    model.score_network.cond_ckpt_path=/path/to/uncond_model.ckpt \
+    data.train_batch_size=4 \
+    data.val_batch_size=4
 ```
+The detailed training configuration can be found in `settings/force_uncond_tune.yaml`.
 
-The detailed training configuration can be found in `settings/cond\_model.yaml`.
-
-
-
-\*\*2. Unconditional Training (Disorder-based)\*\*:
-
+### Sequence-conditional model
 ```bash
-
-python train.py \\
-
-&nbsp;   --config-name uncond\_model \\
-
-&nbsp;   task\_name=uncond\_train \\
-
-&nbsp;   paths.output\_dir="./train\_model"
-
+python3 train.py \
+    --config-name force_cond_tune \
+    model.score_network.cond_ckpt_path=/path/to/cond_model.ckpt \
+    data.train_batch_size=4 \
+    data.val_batch_size=4
 ```
-
-The detailed training configuration can be found in `settings/uncond\_model.yaml`.
+The detailed training configuration can be found in `settings/force_cond_tune.yaml`.
 
 
 
