@@ -65,7 +65,7 @@ Each species-group database is provided as a separate `.tar` archive. Download a
 
 The sequence-conditional and unconditional score models are fine-tuned separately using the force-supervised datasets described above. The pretrained PathDiffusion checkpoints are used to initialize the corresponding models.
 
-### Unconditional model
+### 1. Unconditional model
 
 ```bash
 python3 train.py \
@@ -76,7 +76,7 @@ python3 train.py \
 ```
 The detailed training configuration can be found in `settings/force_uncond_tune.yaml`.
 
-### Sequence-conditional model
+### 2. Sequence-conditional model
 ```bash
 python3 train.py \
     --config-name force_cond_tune \
