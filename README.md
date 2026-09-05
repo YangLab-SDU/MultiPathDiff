@@ -21,21 +21,49 @@ python -m pip install --no-build-isolation --no-use-pep517 -e openfold
 ```
 
 
-
 ## Datasets Preparation
 
-We train FPdiffusion using protein structures from the \[Protein Data Bank](https://www.rcsb.org/) (for conditional generation) and the IDRome database (for unconditional generation). Details on dataset preparation can be found in the datasets folder.
+### Force-supervised fine-tuning dataset
 
-The following datasets and pre-computed representations are required:
+MultiPathDiff is built upon the pretrained score models of PathDiffusion. 
+The dataset used for force-supervised fine-tuning was constructed from the
+PDB-derived training dataset used in PathDiffusion.
 
-1\. RCSB PDB Dataset: See `datasets/rcsb` for details on downloading and processing structured proteins. Once prepared, specify the `csv\_path` and `data\_dir` in the configuration file `settings/cond\_model.yaml`.
+Protein chains were first clustered at 70% sequence identity, and one
+representative structure was retained from each cluster. Proteins with sequence
+lengths between 20 and 400 residues were used for subsequent trajectory
+generation.
 
-2\. MSA and MSTA Generation: After preparing the RCSB dataset, you must generate Multiple Sequence Alignments (MSA) and Multiple Structural Alignments (MSTA) for each protein. Scripts for this process are located in the `run/` directory. Once generated, specify the `msta\_dir` in the configuration file `settings/cond\_model.yaml`.
+For each protein, the pretrained PathDiffusion model was used to generate a
+300-step folding trajectory from an unfolded-like conformation toward a folded
+state. Sixteen conformations were randomly sampled from each trajectory, with
+eight conformations selected from the early stage and eight from the late stage.
 
-3\. ESMFold Representations: See `pretrain\_repr` for details on extracting embeddings. Once prepared, specify the data\_root in the configuration file `settings/cond\_model.yaml`.
+The early-stage conformations, which mainly represent unfolded or weakly
+structured states, were used to fine-tune the unconditional score model.
+The late-stage conformations, which contain more sequence-dependent and
+native-like structural features, were used to fine-tune the
+sequence-conditional score model.
 
-4\. Disordered Protein Dataset: See `datasets/disorder` for details on preparing the IDP dataset. Once prepared, specify the `csv\_path` and `data\_dir` in the configuration file `settings/uncond\_model.yaml`.
+Conformations for which trajectory generation or force calculation failed were
+removed. After filtering, the dataset contained 40,132 representative proteins
+and 642,112 sampled conformations. Proteins were divided into training and
+validation sets at a ratio of 9:1. For each score model, this resulted in
+288,936 training conformations and 32,120 validation conformations.
 
+### OpenMM force annotation
+
+Following the force-guided diffusion strategy used in ConfDiff, molecular
+mechanics forces calculated with OpenMM were used as physical supervision for
+fine-tuning. MultiPathDiff uses force labels only and does not use energy labels
+for model training.
+
+Force labels for the sampled conformations can be generated using:
+
+```bash
+python3 src/utils/protein/openmm_energy.py \
+    --input-root /path/to/your/generated_samples \
+    --output-root /path/to/your/output_dir
 
 
 ## Training
