@@ -87,44 +87,16 @@ python3 train.py \
 The detailed training configuration can be found in `settings/force_cond_tune.yaml`.
 
 
-
 ## Inference (Sampling)
-
-Use eval.py to generate protein structures. The inference pipeline typically uses Classifier-Free Guidance (CFG) combining both conditional and unconditional checkpoints.
-
-\### Basic Command
-
-```bash
-
-python eval.py \\
-
-&nbsp;   sampling=cfg\_inference \\
-
-&nbsp;   model.stage=1 \\
-
-&nbsp;   paths.output\_dir="./output/inference\_result" \\
-
-&nbsp;   paths.guidance.cond\_ckpt="/path/to/cond\_model.ckpt" \\
-
-&nbsp;   paths.guidance.uncond\_ckpt="/path/to/uncond\_model.ckpt" \\
-
-&nbsp;   model.score\_network.msta\_dir="/path/to/msta\_dir" \\
-
-&nbsp;   data.dataset.test\_gen\_dataset.csv\_path="/path/to/test\_data.csv"
-
-```
 
 ### Pipeline Automation
 
-For a complete pipeline (MSA and MSTA Generation -> ESM\_repr Generation -> Folding Pathway Sampling -> Pathway Movie Generation), you can use the scripts provided in the `run/` directory.
+For a complete MultiPathDiff sampling pipeline, you can use the script provided in the `run/` directory.
 
-Example:
+Prepare the target protein sequence as `seq.fasta` in the corresponding input directory, and run:
 
 ```bash
-
-bash run/FPdiffusion.sh ./example 1AB7\_A
-
+bash run/MultiPathDiff.sh ./example 1AB7_A
 ```
-
 
 
