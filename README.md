@@ -2,35 +2,27 @@
 
 ## Installation
 
+MultiPathDiff uses the same software environment as [PathDiffusion](https://github.com/YangLab-SDU/PathDiffusion). 
+The provided `env.yml` therefore retains the Conda environment name `pathdiffusion`. 
+If the PathDiffusion environment is already installed, it can be used directly.
+
 ```bash
-
 # clone project
+git clone https://github.com/BioDragonZ/MultiPathDiff.git
+cd MultiPathDiff
 
-git clone https://github.com/YangLab-SDU/FPdiffusion.git
-
-cd FPdiffusion
-
-
-
-# create conda virtual environment
-
+# create conda environment
 conda env create -f env.yml
+conda activate pathdiffusion
 
-conda activate FPdiffusion
-
-
-
-# install openfold
-
+# install OpenFold if it is not already installed
 git clone https://github.com/aqlaboratory/openfold.git
-
-pip install -e openfold
-
+python -m pip install --no-build-isolation --no-use-pep517 -e openfold
 ```
 
 
 
-\## Datasets Preparation
+## Datasets Preparation
 
 We train FPdiffusion using protein structures from the \[Protein Data Bank](https://www.rcsb.org/) (for conditional generation) and the IDRome database (for unconditional generation). Details on dataset preparation can be found in the datasets folder.
 
@@ -46,7 +38,7 @@ The following datasets and pre-computed representations are required:
 
 
 
-\## Training
+## Training
 
 We use Hydra for configuration management. All configuration files are located in the `settings/` directory.
 
@@ -90,7 +82,7 @@ The detailed training configuration can be found in `settings/uncond\_model.yaml
 
 
 
-\## Inference (Sampling)
+## Inference (Sampling)
 
 Use eval.py to generate protein structures. The inference pipeline typically uses Classifier-Free Guidance (CFG) combining both conditional and unconditional checkpoints.
 
@@ -116,7 +108,7 @@ python eval.py \\
 
 ```
 
-\### Pipeline Automation
+### Pipeline Automation
 
 For a complete pipeline (MSA and MSTA Generation -> ESM\_repr Generation -> Folding Pathway Sampling -> Pathway Movie Generation), you can use the scripts provided in the `run/` directory.
 
