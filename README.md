@@ -41,9 +41,26 @@ python3 src/utils/protein/openmm_energy.py \
     --output-root /path/to/your/output_dir
 ```
 
-### Species-group Databases
+### 3. Species-group Databases
 
-### MSA and MSTA Generation
+The ten species-group databases used in MultiPathDiff are:
+
+- Actinomycetota
+- Bacillota
+- Pseudomonadota
+- Pseudomonadati
+- FCB group
+- Fungi
+- Metazoa
+- Streptophyta
+- Bacteria
+- cellular organisms
+
+The preprocessed databases can be downloaded from:
+
+http://yanglab.qd.sdu.edu.cn/PathDiffusion/
+
+Each species-group database is provided as a separate `.tar` archive. Download and extract all ten databases before generating the species-specific MSAs and MSTAs.
 
 
 ## Training
