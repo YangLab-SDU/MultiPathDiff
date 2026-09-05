@@ -36,7 +36,7 @@ Following ConfDiff, molecular mechanics forces calculated with OpenMM were used 
 Force labels for the sampled conformations can be generated using:
 
 ```bash
-python3 src/utils/protein/openmm_energy.py \
+python src/utils/protein/openmm_energy.py \
     --input-root /path/to/your/generated_samples \
     --output-root /path/to/your/output_dir
 ```
@@ -68,7 +68,7 @@ The sequence-conditional and unconditional score models are fine-tuned separatel
 ### 1. Unconditional model
 
 ```bash
-python3 train.py \
+python train.py \
     --config-name force_uncond_tune \
     model.score_network.cond_ckpt_path=/path/to/uncond_model.ckpt \
     data.train_batch_size=4 \
@@ -78,7 +78,7 @@ The detailed training configuration can be found in `settings/force_uncond_tune.
 
 ### 2. Sequence-conditional model
 ```bash
-python3 train.py \
+python train.py \
     --config-name force_cond_tune \
     model.score_network.cond_ckpt_path=/path/to/cond_model.ckpt \
     data.train_batch_size=4 \
