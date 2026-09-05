@@ -23,7 +23,7 @@ python -m pip install --no-build-isolation --no-use-pep517 -e openfold
 
 ## Datasets Preparation
 
-### Force-supervised fine-tuning dataset
+### 1. Force-supervised fine-tuning dataset
 
 The fine-tuning dataset was constructed from the PDB-derived training dataset used in PathDiffusion. Protein chains were clustered at 70% sequence identity, and representative proteins with sequence lengths between 20 and 400 residues were retained.
 
@@ -40,7 +40,6 @@ python3 src/utils/protein/openmm_energy.py \
     --input-root /path/to/your/generated_samples \
     --output-root /path/to/your/output_dir
 ```
-
 
 ### Species-group Databases
 
