@@ -99,4 +99,5 @@ Prepare the target protein sequence as `seq.fasta` in the corresponding input di
 bash run/MultiPathDiff.sh ./example 1AB7_A
 ```
 
-
+## Contact
+For questions or issues, please open an issue on this repository.
