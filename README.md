@@ -1,10 +1,10 @@
-\# FPdiffusion
+# MultiPathDiff
 
-\## Installation
+## Installation
 
 ```bash
 
-\# clone project
+# clone project
 
 git clone https://github.com/YangLab-SDU/FPdiffusion.git
 
@@ -12,7 +12,7 @@ cd FPdiffusion
 
 
 
-\# create conda virtual environment
+# create conda virtual environment
 
 conda env create -f env.yml
 
@@ -20,7 +20,7 @@ conda activate FPdiffusion
 
 
 
-\# install openfold
+# install openfold
 
 git clone https://github.com/aqlaboratory/openfold.git
 
