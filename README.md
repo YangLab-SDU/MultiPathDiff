@@ -56,9 +56,7 @@ The ten species-group databases used in MultiPathDiff are:
 - Bacteria
 - cellular organisms
 
-The preprocessed databases can be downloaded from:
-
-http://yanglab.qd.sdu.edu.cn/PathDiffusion/
+The preprocessed databases can be downloaded from: http://yanglab.qd.sdu.edu.cn/PathDiffusion/
 
 Each species-group database is provided as a separate `.tar` archive. Download and extract all ten databases before generating the species-specific MSAs and MSTAs.
 
