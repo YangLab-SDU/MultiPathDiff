@@ -8,7 +8,7 @@ If the PathDiffusion environment is already installed, it can be used directly.
 
 ```bash
 # clone project
-git clone https://github.com/BioDragonZ/MultiPathDiff.git
+git clone https://github.com/YangLab-SDU/MultiPathDiff.git
 cd MultiPathDiff
 
 # create conda environment
