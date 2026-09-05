@@ -25,38 +25,13 @@ python -m pip install --no-build-isolation --no-use-pep517 -e openfold
 
 ### Force-supervised fine-tuning dataset
 
-MultiPathDiff is built upon the pretrained score models of PathDiffusion. 
-The dataset used for force-supervised fine-tuning was constructed from the
-PDB-derived training dataset used in PathDiffusion.
+The fine-tuning dataset was constructed from the PDB-derived training dataset used in PathDiffusion. Protein chains were clustered at 70% sequence identity, and representative proteins with sequence lengths between 20 and 400 residues were retained.
 
-Protein chains were first clustered at 70% sequence identity, and one
-representative structure was retained from each cluster. Proteins with sequence
-lengths between 20 and 400 residues were used for subsequent trajectory
-generation.
+For each protein, PathDiffusion was used to generate a 300-step folding trajectory. Sixteen conformations were randomly sampled from each trajectory, including eight from the early stage and eight from the late stage. The early-stage conformations were used to fine-tune the unconditional score model, whereas the late-stage conformations were used to fine-tune the sequence-conditional score model.
 
-For each protein, the pretrained PathDiffusion model was used to generate a
-300-step folding trajectory from an unfolded-like conformation toward a folded
-state. Sixteen conformations were randomly sampled from each trajectory, with
-eight conformations selected from the early stage and eight from the late stage.
+### 2. OpenMM force annotation
 
-The early-stage conformations, which mainly represent unfolded or weakly
-structured states, were used to fine-tune the unconditional score model.
-The late-stage conformations, which contain more sequence-dependent and
-native-like structural features, were used to fine-tune the
-sequence-conditional score model.
-
-Conformations for which trajectory generation or force calculation failed were
-removed. After filtering, the dataset contained 40,132 representative proteins
-and 642,112 sampled conformations. Proteins were divided into training and
-validation sets at a ratio of 9:1. For each score model, this resulted in
-288,936 training conformations and 32,120 validation conformations.
-
-### OpenMM force annotation
-
-Following the force-guided diffusion strategy used in ConfDiff, molecular
-mechanics forces calculated with OpenMM were used as physical supervision for
-fine-tuning. MultiPathDiff uses force labels only and does not use energy labels
-for model training.
+Following ConfDiff, molecular mechanics forces calculated with OpenMM were used as physical supervision for force-supervised fine-tuning in MultiPathDiff.
 
 Force labels for the sampled conformations can be generated using:
 
