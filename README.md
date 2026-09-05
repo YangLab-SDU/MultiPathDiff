@@ -64,6 +64,12 @@ Force labels for the sampled conformations can be generated using:
 python3 src/utils/protein/openmm_energy.py \
     --input-root /path/to/your/generated_samples \
     --output-root /path/to/your/output_dir
+```
+
+
+### Species-group Databases
+
+### MSA and MSTA Generation
 
 
 ## Training
