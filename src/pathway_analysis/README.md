@@ -5,7 +5,7 @@ scores to MultiPathDiff trajectories and cluster trajectories with similar
 folding patterns. The workflow has three steps:
 
 1. Map a PDB chain to UniProt and its species-group label.
-2. Assign a normalized pathway score according to taxonomic proximity.
+2. Assign a normalized pathway probability according to taxonomic proximity.
 3. Cluster folding trajectories using residue folding times and contact
    formation times, then rank the clusters using the pathway scores.
 
@@ -14,9 +14,8 @@ folding patterns. The workflow has three steps:
 | File | Description |
 | --- | --- |
 | `map_pdb_taxonomy.py` | Maps PDB chains to UniProt accessions through PDBe/SIFTS and assigns one or more AFDB species-group labels. Unmatched accessions default to label 4, `cellular_organisms`. |
-| `score_pathways.py` | Filters invalid MSTA files and assigns normalized pathway scores using predefined taxonomic-proximity tiers. |
-| `cluster_pathways.py` | Extracts folding-time features, calculates pairwise pathway distances, clusters trajectories, and selects score-guided cluster representatives. |
-| `run_pathway_analysis.sbatch` | Example Slurm workflow for processing all targets in a test set. |
+| `pathway_probability.py` | Filters invalid MSTA files and assigns normalized pathway scores using predefined taxonomic-proximity tiers. |
+| `pathways_cluster.py` | Extracts folding-time features, calculates pairwise pathway distances, clusters trajectories, and selects score-guided cluster representatives. |
 
 ## Requirements
 
@@ -78,7 +77,7 @@ used by MultiPathDiff.
 ### 2. Assign pathway scores
 
 ```bash
-python score_pathways.py 1AB7_A \
+python Pathway_probability.py 1AB7_A \
   --label_csv /path/to/1AB7_A/pathway_cluster/uniprot_mapping.with_label.csv \
   --root /path/to/test_data \
   --output_dir /path/to/1AB7_A/pathway_cluster \
@@ -103,7 +102,7 @@ not used during score assignment.
 ### 3. Cluster and rank folding pathways
 
 ```bash
-python cluster_pathways.py \
+python pathways_cluster.py \
   --frames_dir /path/to/1AB7_A/tran_out_pdb \
   --out_dir /path/to/1AB7_A/pathway_cluster \
   --pathway_score_csv /path/to/1AB7_A/pathway_cluster/pathway_score.csv \
@@ -143,22 +142,3 @@ The principal clustering outputs are:
 Add `--save_contact_outputs` to save the contact definitions and contact
 formation-time matrix. Add `--save_ca_distance_curves` to save the aligned
 C-alpha distance curve for every trajectory.
-
-## Slurm batch run
-
-Edit the data paths, log paths, Conda environment, and script directory in
-`run_pathway_analysis.sbatch`, then submit it with:
-
-```bash
-sbatch run_pathway_analysis.sbatch
-```
-
-The supplied batch script assumes that the mapping CSV already exists and
-therefore leaves the mapping command commented out. It recreates each target's
-`pathway_cluster` directory before scoring and clustering. Existing results in
-that directory are deleted, so change this behavior if previous outputs must be
-retained.
-
-The script uses a flag file for each target. Remove the corresponding flag only
-when a failed or incomplete target needs to be rerun.
-
