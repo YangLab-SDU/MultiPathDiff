@@ -262,8 +262,8 @@ if [ ! -d "$Stage1Dir" ] || [ -z "$(ls -A "$Stage1Dir" 2>/dev/null)" ]; then
     python3 eval.py \
         sampling=cfg_inference \
         data.repr_loader.data_root="$TestDir" \
-        paths.guidance.cond_ckpt="$ToolDir/cond_model2.ckpt" \
-        paths.guidance.uncond_ckpt="$ToolDir/uncond_model.ckpt" \
+        paths.guidance.cond_ckpt="$ToolDir/finetune_conditional_model.ckpt" \
+        paths.guidance.uncond_ckpt="$ToolDir/finetune_unconditional_model.ckpt" \
         paths.output_dir="$TestDir" \
         data.dataset.test_gen_dataset.csv_path="$CsvFile" \
         data.dataset.test_gen_dataset.num_samples="$FinalColumns" \
